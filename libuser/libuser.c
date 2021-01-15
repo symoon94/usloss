@@ -10,12 +10,14 @@
 #include <usloss.h>
 #include <usyscall.h>
 
-#define CHECKMODE {                     \
-    if (USLOSS_PsrGet() & USLOSS_PSR_CURRENT_MODE) {                \
-        USLOSS_Console("Cannot invoke syscall from kernel mode!!\n");   \
-        USLOSS_Halt(1);                     \
-    }                           \
-}
+#define CHECKMODE                                                         \
+    {                                                                     \
+        if (USLOSS_PsrGet() & USLOSS_PSR_CURRENT_MODE)                    \
+        {                                                                 \
+            USLOSS_Console("Cannot invoke syscall from kernel mode!!\n"); \
+            USLOSS_Halt(1);                                               \
+        }                                                                 \
+    }
 /*
  *  Routine:  Sys_TermRead
  *
@@ -30,19 +32,19 @@
  *  Return Value: 0 means success, -1 means error occurs
  *
  */
-int Sys_TermRead(char *buff, int bsize, int unit_id, int *nread)     
+int Sys_TermRead(char *buff, int bsize, int unit_id, int *nread)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_TERMREAD;
-    sa.arg1 = (void *) buff;
-    sa.arg2 = (void *) bsize;
-    sa.arg3 = (void *) unit_id;
-    USLOSS_Syscall((void *) &sa);
-    *nread = (int) sa.arg2;
-    return (int) sa.arg4;
-} 
+    sa.arg1 = (void *)buff;
+    sa.arg2 = (void *)bsize;
+    sa.arg3 = (void *)unit_id;
+    USLOSS_Syscall((void *)&sa);
+    *nread = (int)sa.arg2;
+    return (int)sa.arg4;
+}
 
 /*
  *  Routine:  Sys_TermWrite
@@ -58,19 +60,19 @@ int Sys_TermRead(char *buff, int bsize, int unit_id, int *nread)
  *  Return Value: 0 means success, -1 means error occurs
  *
  */
-int Sys_TermWrite(char *buff, int bsize, int unit_id, int *nwrite)    
+int Sys_TermWrite(char *buff, int bsize, int unit_id, int *nwrite)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_TERMWRITE;
-    sa.arg1 = (void *) buff;
-    sa.arg2 = (void *) bsize;
-    sa.arg3 = (void *) unit_id;
-    USLOSS_Syscall((void *) &sa);
-    *nwrite = (int) sa.arg2;
-    return (int) sa.arg4;
-} 
+    sa.arg1 = (void *)buff;
+    sa.arg2 = (void *)bsize;
+    sa.arg3 = (void *)unit_id;
+    USLOSS_Syscall((void *)&sa);
+    *nwrite = (int)sa.arg2;
+    return (int)sa.arg4;
+}
 
 /*
  *  Routine:  Sys_Spawn
@@ -93,22 +95,22 @@ int Sys_TermWrite(char *buff, int bsize, int unit_id, int *nwrite)
  *      P1_SUCCESS:             success 
  *
  */
-int Sys_Spawn(char *name, int (*func)(void *), void *arg, int stack_size, int priority, 
-    int *pid)   
+int Sys_Spawn(char *name, int (*func)(void *), void *arg, int stack_size, int priority,
+              int *pid)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_SPAWN;
-    sa.arg1 = (void *) func;
+    sa.arg1 = (void *)func;
     sa.arg2 = arg;
-    sa.arg3 = (void *) stack_size;
-    sa.arg4 = (void *) priority;
-    sa.arg5 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    *pid = (int) sa.arg1;
-    return (int) sa.arg4;
-} 
+    sa.arg3 = (void *)stack_size;
+    sa.arg4 = (void *)priority;
+    sa.arg5 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    *pid = (int)sa.arg1;
+    return (int)sa.arg4;
+}
 
 /*
  *  Routine:  Sys_Wait
@@ -125,18 +127,17 @@ int Sys_Spawn(char *name, int (*func)(void *), void *arg, int stack_size, int pr
  *      P1_SUCCESS:       success
  *
  */
-int Sys_Wait(int *pid, int *status) 
+int Sys_Wait(int *pid, int *status)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_WAIT;
-    USLOSS_Syscall((void *) &sa);
-    *pid = (int) sa.arg1;
-    *status = (int) sa.arg2;
-    return (int) sa.arg4;
-} 
-
+    USLOSS_Syscall((void *)&sa);
+    *pid = (int)sa.arg1;
+    *status = (int)sa.arg2;
+    return (int)sa.arg4;
+}
 
 /*
  *  Routine:  Sys_Terminate
@@ -152,14 +153,13 @@ int Sys_Wait(int *pid, int *status)
 void Sys_Terminate(int status)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_TERMINATE;
-    sa.arg1 = (void *) status;
-    USLOSS_Syscall((void *) &sa);
+    sa.arg1 = (void *)status;
+    USLOSS_Syscall((void *)&sa);
     return;
-    
-} 
+}
 
 /*
  *  Routine:  Sys_Sleep
@@ -173,16 +173,16 @@ void Sys_Terminate(int status)
  *      P1_SUCCESS:         success
  *
  */
-int Sys_Sleep(int seconds)                                 
+int Sys_Sleep(int seconds)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_SLEEP;
-    sa.arg1 = (void *) seconds;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
-} 
+    sa.arg1 = (void *)seconds;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
+}
 
 /*
  *  Routine:  Sys_DiskWrite
@@ -211,12 +211,12 @@ int Sys_DiskWrite(void *dbuff, int track, int first, int sectors, int unit)
     CHECKMODE;
     sa.number = SYS_DISKWRITE;
     sa.arg1 = dbuff;
-    sa.arg2 = (void *) sectors;
-    sa.arg3 = (void *) track;
-    sa.arg4 = (void *) first;
-    sa.arg5 = (void *) unit;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg2 = (void *)sectors;
+    sa.arg3 = (void *)track;
+    sa.arg4 = (void *)first;
+    sa.arg5 = (void *)unit;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of DiskWrite */
 
 /*
@@ -242,16 +242,16 @@ int Sys_DiskWrite(void *dbuff, int track, int first, int sectors, int unit)
 int Sys_DiskRead(void *dbuff, int track, int first, int sectors, int unit)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_DISKREAD;
     sa.arg1 = dbuff;
-    sa.arg2 = (void *) sectors;
-    sa.arg3 = (void *) track;
-    sa.arg4 = (void *) first;
-    sa.arg5 = (void *) unit;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg2 = (void *)sectors;
+    sa.arg3 = (void *)track;
+    sa.arg4 = (void *)first;
+    sa.arg5 = (void *)unit;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of DiskRead */
 
 /*
@@ -277,12 +277,12 @@ int Sys_DiskSize(int unit, int *sector, int *track, int *disk)
 
     CHECKMODE;
     sa.number = SYS_DISKSIZE;
-    sa.arg1 = (void *) unit;
-    USLOSS_Syscall((void *) &sa);
-    *sector = (int) sa.arg1;
-    *track = (int) sa.arg2;
-    *disk = (int) sa.arg3;
-    return (int) sa.arg4;
+    sa.arg1 = (void *)unit;
+    USLOSS_Syscall((void *)&sa);
+    *sector = (int)sa.arg1;
+    *track = (int)sa.arg2;
+    *disk = (int)sa.arg3;
+    return (int)sa.arg4;
 } /* end of DiskSize */
 
 /*
@@ -294,41 +294,41 @@ int Sys_DiskSize(int unit, int *sector, int *track, int *disk)
  *                (output value: the time of day)
  *
  */
-void Sys_GetTimeOfDay(int *tod)                           
+void Sys_GetTimeOfDay(int *tod)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_GETTIMEOFDAY;
-    USLOSS_Syscall((void *) &sa);
-    *tod = (int) sa.arg1;
+    USLOSS_Syscall((void *)&sa);
+    *tod = (int)sa.arg1;
     return;
 } /* end of GetTimeOfDay */
 
-/*
- *  Routine:  Sys_GetProcInfo
- *
- *  Description: This is the call entry point for the process's info.
- *      
- *
- *  Arguments:    int *info  -- pointer to P1_ProcInfo
- *
- *  Return Value: 
- *      P1_INVALID_PID:     invalid pid
- *      P1_SUCCESS:         success
- *
- */
-int Sys_GetProcInfo(int pid, P1_ProcInfo *info)                           
-{
-    USLOSS_Sysargs sa;
+// /*
+//  *  Routine:  Sys_GetProcInfo
+//  *
+//  *  Description: This is the call entry point for the process's info.
+//  *
+//  *
+//  *  Arguments:    int *info  -- pointer to P1_ProcInfo
+//  *
+//  *  Return Value:
+//  *      P1_INVALID_PID:     invalid pid
+//  *      P1_SUCCESS:         success
+//  *
+//  */
+// int Sys_GetProcInfo(int pid, P1_ProcInfo *info)
+// {
+//     USLOSS_Sysargs sa;
 
-    CHECKMODE;
-    sa.number = SYS_GETPROCINFO;
-    sa.arg1 = (void *) pid;
-    sa.arg2 = (void *) info;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
-} 
+//     CHECKMODE;
+//     sa.number = SYS_GETPROCINFO;
+//     sa.arg1 = (void *) pid;
+//     sa.arg2 = (void *) info;
+//     USLOSS_Syscall((void *) &sa);
+//     return (int) sa.arg4;
+// }
 
 /*
  *  Routine:  Sys_GetPID
@@ -340,14 +340,14 @@ int Sys_GetProcInfo(int pid, P1_ProcInfo *info)
  *                (output value: the PID)
  *
  */
-void Sys_GetPID(int *pid)                           
+void Sys_GetPID(int *pid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_GETPID;
-    USLOSS_Syscall((void *) &sa);
-    *pid = (int) sa.arg1;
+    USLOSS_Syscall((void *)&sa);
+    *pid = (int)sa.arg1;
     return;
 } /* end of GetPID */
 
@@ -366,19 +366,17 @@ void Sys_GetPID(int *pid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_LockName(int lid, char *name)                       
+int Sys_LockName(int lid, char *name)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_LOCKNAME;
-    sa.arg1 = (void *) lid;
-    sa.arg2 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)lid;
+    sa.arg2 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_LockName */
-
-
 
 /*
  *  Routine:  Sys_LockFree
@@ -393,17 +391,16 @@ int Sys_LockName(int lid, char *name)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_LockFree(int lid)                       
+int Sys_LockFree(int lid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_LOCKFREE;
-    sa.arg1 = (void *) lid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)lid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_LockFree */
-
 
 /*
  *  Routine:  Sys_LockCreate
@@ -424,10 +421,10 @@ int Sys_LockCreate(char *name, int *lid)
 
     CHECKMODE;
     sa.number = SYS_LOCKCREATE;
-    sa.arg1 = (void *) lid;
-    sa.arg2 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)lid;
+    sa.arg2 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_LockCreate */
 
 /*
@@ -443,15 +440,15 @@ int Sys_LockCreate(char *name, int *lid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_Lock(int lid)                       
+int Sys_Lock(int lid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_LOCK;
-    sa.arg1 = (void *) lid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)lid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_Lock */
 
 /*
@@ -467,15 +464,15 @@ int Sys_Lock(int lid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_Unlock(int lid)                       
+int Sys_Unlock(int lid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_UNLOCK;
-    sa.arg1 = (void *) lid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)lid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_Unlock */
 
 /*
@@ -493,16 +490,16 @@ int Sys_Unlock(int lid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_CondName(int vid, char *name)                       
+int Sys_CondName(int vid, char *name)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_CONDNAME;
-    sa.arg1 = (void *) vid;
-    sa.arg2 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    sa.arg2 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_CondName */
 
 /*
@@ -519,15 +516,15 @@ int Sys_CondName(int vid, char *name)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_CondFree(int vid)                       
+int Sys_CondFree(int vid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_CONDFREE;
-    sa.arg1 = (void *) vid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_CondFree */
 
 /*
@@ -550,10 +547,10 @@ int Sys_CondCreate(char *name, int *vid)
 
     CHECKMODE;
     sa.number = SYS_CONDCREATE;
-    sa.arg1 = (void *) vid;
-    sa.arg2 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    sa.arg2 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_CondCreate */
 
 /*
@@ -571,16 +568,16 @@ int Sys_CondCreate(char *name, int *vid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_CondWait(int vid, int lid)                       
+int Sys_CondWait(int vid, int lid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_CONDWAIT;
-    sa.arg1 = (void *) vid;
-    sa.arg2 = (void *) lid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    sa.arg2 = (void *)lid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_CondWait */
 
 /*
@@ -598,16 +595,16 @@ int Sys_CondWait(int vid, int lid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_Signal(int vid, int lid)                       
+int Sys_Signal(int vid, int lid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_SIGNAL;
-    sa.arg1 = (void *) vid;
-    sa.arg2 = (void *) lid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    sa.arg2 = (void *)lid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_Signal */
 
 /*
@@ -625,16 +622,16 @@ int Sys_Signal(int vid, int lid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_Broadcast(int vid, int lid)                       
+int Sys_Broadcast(int vid, int lid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_BROADCAST;
-    sa.arg1 = (void *) vid;
-    sa.arg2 = (void *) lid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    sa.arg2 = (void *)lid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_Broadcast */
 
 /*
@@ -650,15 +647,15 @@ int Sys_Broadcast(int vid, int lid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_NakedSignal(int vid)                       
+int Sys_NakedSignal(int vid)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_NAKEDSIGNAL;
-    sa.arg1 = (void *) vid;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)vid;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Sys_NakedSignal */
 
 /*
@@ -675,16 +672,16 @@ int Sys_NakedSignal(int vid)
  *      P1_SUCCESS:          success
  *
  */
-int Sys_SemName(int sid, char *name)                           
+int Sys_SemName(int sid, char *name)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_SEMNAME;
-    sa.arg1 = (void *) sid;
-    sa.arg2 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)sid;
+    sa.arg2 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of DumpProcesses */
 
 /*
@@ -712,13 +709,12 @@ int Sys_SemCreate(char *name, int value, int *semaphore)
 
     CHECKMODE;
     sa.number = SYS_SEMCREATE;
-    sa.arg1 = (void *) value;
-    sa.arg2 = (void *) name;
-    USLOSS_Syscall((void *) &sa);
-    *semaphore = (int) sa.arg1;
-    return (int) sa.arg4;
+    sa.arg1 = (void *)value;
+    sa.arg2 = (void *)name;
+    USLOSS_Syscall((void *)&sa);
+    *semaphore = (int)sa.arg1;
+    return (int)sa.arg4;
 } /* end of SemCreate */
-
 
 /*
  *  Routine:  Sys_SemP
@@ -740,9 +736,9 @@ int Sys_SemP(int semaphore)
 
     CHECKMODE;
     sa.number = SYS_SEMP;
-    sa.arg1 = (void *) semaphore;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)semaphore;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of SemP */
 
 /*
@@ -764,9 +760,9 @@ int Sys_SemV(int semaphore)
 
     CHECKMODE;
     sa.number = SYS_SEMV;
-    sa.arg1 = (void *) semaphore;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)semaphore;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of SemV */
 
 /*
@@ -789,9 +785,9 @@ int Sys_SemFree(int semaphore)
 
     CHECKMODE;
     sa.number = SYS_SEMFREE;
-    sa.arg1 = (void *) semaphore;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)semaphore;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of SemFree */
 
 /*
@@ -812,17 +808,18 @@ int Sys_SemFree(int semaphore)
 int Sys_VmInit(int mappings, int pages, int frames, int pagers, void **region)
 {
     USLOSS_Sysargs sa;
-    int        rc;
+    int rc;
 
     CHECKMODE;
     sa.number = SYS_VMINIT;
-    sa.arg1 = (void *) mappings;
-    sa.arg2 = (void *) pages;
-    sa.arg3 = (void *) frames;
-    sa.arg4 = (void *) pagers;
-    USLOSS_Syscall((void *) &sa);
-    rc = (int) sa.arg4;
-    if (rc == 0) {
+    sa.arg1 = (void *)mappings;
+    sa.arg2 = (void *)pages;
+    sa.arg3 = (void *)frames;
+    sa.arg4 = (void *)pagers;
+    USLOSS_Syscall((void *)&sa);
+    rc = (int)sa.arg4;
+    if (rc == 0)
+    {
         *region = sa.arg1;
     }
     return rc;
@@ -844,11 +841,9 @@ void Sys_VmShutdown(void)
 
     CHECKMODE;
     sa.number = SYS_VMSHUTDOWN;
-    USLOSS_Syscall((void *) &sa);
+    USLOSS_Syscall((void *)&sa);
     return;
 }
-
-
 
 /*
  *  Routine:  Sys_Protect
@@ -869,10 +864,10 @@ int Sys_Protect(int page, int protection)
 
     CHECKMODE;
     sa.number = SYS_PROTECT;
-    sa.arg1 = (void *) page;
-    sa.arg2 = (void *) protection;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)page;
+    sa.arg2 = (void *)protection;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Protect */
 
 /*
@@ -897,11 +892,11 @@ int Sys_Share(int pid, int source, int target)
 
     CHECKMODE;
     sa.number = SYS_SHARE;
-    sa.arg1 = (void *) pid;
-    sa.arg2 = (void *) source;
-    sa.arg3 = (void *) target;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)pid;
+    sa.arg2 = (void *)source;
+    sa.arg3 = (void *)target;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of Share */
 
 /*
@@ -927,11 +922,11 @@ int Sys_COW(int pid, int source, int target)
 
     CHECKMODE;
     sa.number = SYS_COW;
-    sa.arg1 = (void *) pid;
-    sa.arg2 = (void *) source;
-    sa.arg3 = (void *) target;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)pid;
+    sa.arg2 = (void *)source;
+    sa.arg3 = (void *)target;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of COW */
 
 /*
@@ -945,16 +940,16 @@ int Sys_COW(int pid, int source, int target)
  *                (output value: completion status)
  *
  */
-int Sys_HeapAlloc(int bytes, void **ptr)                           
+int Sys_HeapAlloc(int bytes, void **ptr)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_HEAPALLOC;
-    sa.arg1 = (void *) bytes;
-    USLOSS_Syscall((void *) &sa);
+    sa.arg1 = (void *)bytes;
+    USLOSS_Syscall((void *)&sa);
     *ptr = sa.arg1;
-    return (int) sa.arg4;
+    return (int)sa.arg4;
 } /* end of HeapAlloc */
 
 /*
@@ -973,8 +968,8 @@ int Sys_HeapFree(void *ptr)
     CHECKMODE;
     sa.number = SYS_HEAPFREE;
     sa.arg1 = ptr;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of HeapFree */
 
 /*
@@ -993,14 +988,14 @@ int Sys_HeapFree(void *ptr)
 int Sys_MboxCreate(int numslots, int slotsize, int *mid)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_MBOXCREATE;
-    sa.arg1 = (void *) numslots;
-    sa.arg2 = (void *) slotsize;
-    USLOSS_Syscall((void *) &sa);
-    *mid = (int) sa.arg1;
-    return (int) sa.arg4;
+    sa.arg1 = (void *)numslots;
+    sa.arg2 = (void *)slotsize;
+    USLOSS_Syscall((void *)&sa);
+    *mid = (int)sa.arg1;
+    return (int)sa.arg4;
 } /* end of MboxCreate */
 
 /*
@@ -1016,14 +1011,13 @@ int Sys_MboxCreate(int numslots, int slotsize, int *mid)
 int Sys_MboxRelease(int mbox)
 {
     USLOSS_Sysargs sa;
-    
+
     CHECKMODE;
     sa.number = SYS_MBOXRELEASE;
-    sa.arg1 = (void *) mbox;
-    USLOSS_Syscall((void *) &sa);
-    return (int) sa.arg4;
+    sa.arg1 = (void *)mbox;
+    USLOSS_Syscall((void *)&sa);
+    return (int)sa.arg4;
 } /* end of MboxRelease */
-
 
 /*
  *  Routine:  Sys_MboxSend
@@ -1037,18 +1031,18 @@ int Sys_MboxRelease(int mbox)
  *  Return Value: 0 means success, -1 means error occurs
  *
  */
-int Sys_MboxSend(int mbox, void *msg, int *size)                     
+int Sys_MboxSend(int mbox, void *msg, int *size)
 {
-    USLOSS_Sysargs  sa;
+    USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_MBOXSEND;
-    sa.arg1 = (void *) mbox;
+    sa.arg1 = (void *)mbox;
     sa.arg2 = msg;
-    sa.arg3 = (void *) *size;
-    USLOSS_Syscall((void *) &sa);
-    *size = (int) sa.arg3;
-    return (int) sa.arg4;
+    sa.arg3 = (void *)*size;
+    USLOSS_Syscall((void *)&sa);
+    *size = (int)sa.arg3;
+    return (int)sa.arg4;
 } /* end of MboxSend */
 
 /*
@@ -1065,16 +1059,16 @@ int Sys_MboxSend(int mbox, void *msg, int *size)
  */
 int Sys_MboxReceive(int mbox, void *msg, int *size)
 {
-    USLOSS_Sysargs  sa;
+    USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_MBOXRECEIVE;
-    sa.arg1 = (void *) mbox;
+    sa.arg1 = (void *)mbox;
     sa.arg2 = msg;
-    sa.arg3 = (void *) *size;
-    USLOSS_Syscall( (void *) &sa );
-    *size = (int) sa.arg2;
-    return (int) sa.arg4;
+    sa.arg3 = (void *)*size;
+    USLOSS_Syscall((void *)&sa);
+    *size = (int)sa.arg2;
+    return (int)sa.arg4;
 } /* end of MboxReceive */
 
 /*
@@ -1089,18 +1083,18 @@ int Sys_MboxReceive(int mbox, void *msg, int *size)
  *  Return Value: 0 means success, -1 means error occurs, 1 means mailbox is full
  *
  */
-int Sys_MboxCondSend(int mbox, void *msg, int *size)                     
+int Sys_MboxCondSend(int mbox, void *msg, int *size)
 {
     USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_MBOXCONDSEND;
-    sa.arg1 = (void *) mbox;
+    sa.arg1 = (void *)mbox;
     sa.arg2 = msg;
-    sa.arg3 = (void *) *size;
-    USLOSS_Syscall((void *) &sa);
-    *size = (int) sa.arg3;
-    return (int) sa.arg4;
+    sa.arg3 = (void *)*size;
+    USLOSS_Syscall((void *)&sa);
+    *size = (int)sa.arg3;
+    return (int)sa.arg4;
 }
 
 /*
@@ -1117,17 +1111,16 @@ int Sys_MboxCondSend(int mbox, void *msg, int *size)
  */
 int Sys_MboxCondReceive(int mbox, void *msg, int *size)
 {
-    USLOSS_Sysargs  sa;
+    USLOSS_Sysargs sa;
 
     CHECKMODE;
     sa.number = SYS_MBOXCONDRECEIVE;
-    sa.arg1 = (void *) mbox;
+    sa.arg1 = (void *)mbox;
     sa.arg2 = msg;
-    sa.arg3 = (void *) *size;
-    USLOSS_Syscall( (void *) &sa );
-    *size = (int) sa.arg2;
-    return (int) sa.arg4;
-} 
-
+    sa.arg3 = (void *)*size;
+    USLOSS_Syscall((void *)&sa);
+    *size = (int)sa.arg2;
+    return (int)sa.arg4;
+}
 
 /* end libuser.c */
